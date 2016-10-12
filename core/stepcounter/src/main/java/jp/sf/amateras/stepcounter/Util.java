@@ -3,6 +3,12 @@ package jp.sf.amateras.stepcounter;
 import java.io.Closeable;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 /**
  * 各種ユーティリティメソッドを提供するクラス
@@ -132,5 +138,94 @@ public class Util {
 		}
 
 		return System.getProperty("file.encoding");
+	}
+	
+	public static final Map<String, String> PRIOR_EXTENSION_PAIRS;
+	static {
+		PRIOR_EXTENSION_PAIRS = new LinkedHashMap<String, String>();
+		PRIOR_EXTENSION_PAIRS.put(".sqlj", ".java");
+	}
+	
+	public static String[] exceptGeneratedFile(String[] filePaths) {
+		return exceptGeneratedFile(PRIOR_EXTENSION_PAIRS, null, filePaths);
+	}
+	
+	public static String[] exceptGeneratedFile(String basePath, String[] filePaths) {
+		return exceptGeneratedFile(PRIOR_EXTENSION_PAIRS, basePath, filePaths);
+	}
+	
+	public static File[] exceptGeneratedFile(File[] files) {
+		return exceptGeneratedFile(PRIOR_EXTENSION_PAIRS, null, files);
+	}
+	
+	public static String[] exceptGeneratedFile(Map<String, String> extensionPairs, String basePath, String[] filePaths) {
+		if (!Boolean.getBoolean("ignore.generated.file")) {
+			return filePaths;
+		}
+		if (filePaths == null) {
+			return filePaths;
+		}
+		File[] files = new File[filePaths.length];
+		for(int i=0; i<files.length; i++) {
+			files[i] = new File(filePaths[i]);
+		}
+		File basePathFile = basePath == null ? null : new File(basePath);
+		File[] exceptedFiles = exceptGeneratedFile(extensionPairs, basePathFile, files);
+		String[] exceptedPaths = new String[exceptedFiles.length];
+		for (int i=0; i<exceptedPaths.length; i++) {
+			exceptedPaths[i] = exceptedFiles[i].getPath();
+		}
+		return exceptedPaths;
+	}
+	
+	public static File[] exceptGeneratedFile(Map<String, String> extensionPairs, File basePathFile, File[] files) {
+		if (!Boolean.getBoolean("ignore.generated.file")) {
+			return files;
+		}
+		if (files == null) {
+			return files;
+		}
+		List<File> fileList = new ArrayList<File>(Arrays.asList(files));
+		List<File> priors = gatherPriorExtensionFiles(extensionPairs, basePathFile, files);
+		for (Iterator<File> itr = fileList.iterator(); itr.hasNext();) {
+			File file = itr.next();
+			if (!(basePathFile == null ? file.isFile() : new File(basePathFile, file.getPath()).isFile())) {
+				continue;
+			}
+			String fileExtension = selectExtension(file);
+			if (extensionPairs.containsValue(fileExtension)) {
+				String filePath = file.getPath();
+				String filePathWithoutExtension = filePath.substring(0, filePath.length() - fileExtension.length());
+				for (Entry<String, String> extensionPair : extensionPairs.entrySet()) {
+					if (!fileExtension.equals(extensionPair.getValue())) {
+						continue;
+					}
+					if (priors.contains(new File(filePathWithoutExtension + extensionPair.getKey()))) {
+						itr.remove();
+						break;
+					}
+				}
+			}
+		}
+		return fileList.toArray(new File[fileList.size()]);
+	}
+
+	private static List<File> gatherPriorExtensionFiles(Map<String, String> extensionPairs, File basePathFile, File[] files) {
+		List<File> priors = new ArrayList<File>();
+		for(File file : files) {
+			if (basePathFile == null ? file.isFile() : new File(basePathFile, file.getPath()).isFile()) {
+				String extension = selectExtension(file);
+				if (extensionPairs.containsKey(extension)) {
+					priors.add(file);
+				}
+			}
+		}
+		return priors;
+	}
+
+	private static String selectExtension(File file) {
+		String path = file.getPath();
+		int lastPeriodIndex = path.lastIndexOf('.');
+		return lastPeriodIndex > 0 ? path.substring(lastPeriodIndex) : "";
 	}
 }

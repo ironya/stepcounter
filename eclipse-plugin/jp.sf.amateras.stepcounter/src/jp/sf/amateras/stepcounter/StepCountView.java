@@ -6,12 +6,14 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import jp.sf.amateras.stepcounter.format.ExcelFormatter;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.viewers.ISelection;
@@ -37,6 +39,9 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+
+import jp.sf.amateras.stepcounter.format.ExcelFormatter;
+import jp.sf.amateras.stepcounter.preferences.PreferenceConstants;
 
 /**
  * カウント結果を表示するためのViewPart
@@ -412,7 +417,7 @@ public class StepCountView extends ViewPart {
 			List<CategoryStepDto> categoryResult) {
 		CountResult result = new CountResult();
 		try {
-			IResource[] children = container.members();
+			IResource[] children = exceptGeneratedResource(Util.PRIOR_EXTENSION_PAIRS, container.members());
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof IFile) {
 					CountResult count = countFile((IFile)children[i],
@@ -437,6 +442,54 @@ public class StepCountView extends ViewPart {
 		return result;
 	}
 
+	private IResource[] exceptGeneratedResource(Map<String, String> extensionPairs, IResource[] members) {
+		if (members == null || members.length == 0)
+			return members;
+		if (!StepCounterPlugin.getDefault().getPreferenceStore()
+				.getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE))
+			return members;
+		
+		List<IResource> excepted = new ArrayList<IResource>(Arrays.asList(members));
+		List<String> priors = gatherPriorExtensionFiles(extensionPairs, members);
+		for (Iterator<IResource> itr = excepted.iterator(); itr.hasNext();) {
+			IResource member = itr.next();
+			if (member instanceof IFile) {
+				IFile file = (IFile) member;
+				String fileExtension = file.getFileExtension() == null ? null : "." + file.getFileExtension();
+				if (extensionPairs.containsValue(fileExtension)) {
+					String fileName = file.getFullPath().toString();
+					String fileNameWithoutExtension = fileName.substring(0, fileName.length() - fileExtension.length());
+					for (Entry<String, String> extensionPair : extensionPairs.entrySet()) {
+						if (!fileExtension.equals(extensionPair.getValue())) {
+							continue;
+						}
+						if (priors.contains(fileNameWithoutExtension + extensionPair.getKey())) {
+							itr.remove();
+							break;
+						}
+					}
+				}
+			}
+		}
+		
+		return excepted.toArray(new IResource[excepted.size()]);
+	}
+
+	private List<String> gatherPriorExtensionFiles(Map<String, String> extensionPairs, IResource[] members) {
+		List<String> priors = new ArrayList<String>(members.length);
+		for (IResource member : members) {
+			if (member instanceof IFile) {
+				String extension = member.getFileExtension() == null ? null : "." + member.getFileExtension();
+				if (extension != null) {
+					if (extensionPairs.containsKey(extension)) {
+						priors.add(member.getFullPath().toString());
+					}
+				}
+			}
+		}
+		return priors;
+	}
+
 	/**
 	 * パッケージをカウント
 	 *
@@ -446,25 +499,11 @@ public class StepCountView extends ViewPart {
 	private CountResult countPackage(IPackageFragment pkg, List<CategoryStepDto> categoryResult) {
 		CountResult result = new CountResult();
 		try {
-			ICompilationUnit[] files = pkg.getCompilationUnits();
-			for (int i = 0; i < files.length; i++) {
-				if(this.files.containsValue(files[i].getResource())){
-					return null;
-				}
-				CountResult count = countFile((IFile) files[i].getResource(), categoryResult);
-				if (count != null) {
-					result.setStep(result.getStep() + count.getStep());
-					result.setNon(result.getNon() + count.getNon());
-					result.setComment(result.getComment() + count.getComment());
-				}
-			}
-			Object[] obj = pkg.getNonJavaResources();
-			for (int i = 0; i < obj.length; i++) {
-				CountResult count = countFile((IFile)obj[i], categoryResult);
-				if (count != null) {
-					result.setStep(result.getStep() + count.getStep());
-					result.setNon(result.getNon() + count.getNon());
-					result.setComment(result.getComment() + count.getComment());
+			IFile[] merged = merge(pkg.getCompilationUnits(), pkg.getNonJavaResources());
+			for (IFile file : merged) {
+				if (!this.files.containsValue(file)) {
+					count(file, result, categoryResult);
+					break;
 				}
 			}
 		} catch (Exception ex) {
@@ -472,6 +511,27 @@ public class StepCountView extends ViewPart {
 		}
 		return result;
 	}
+	
+	private IFile[] merge (ICompilationUnit[] javaFiles, Object[] nonJavaFiles) {
+		int javaFilesLength = javaFiles == null ? 0 : javaFiles.length;
+		int nonJavaFilesLength = nonJavaFiles == null ? 0 : nonJavaFiles.length;
+		List<IFile> merged = new ArrayList<IFile>(javaFiles.length + nonJavaFiles.length);
+		for (int i=0; i<javaFilesLength; i++) {
+			merged.add((IFile) javaFiles[i].getResource());
+		}
+		for (int i=0; i<nonJavaFilesLength; i++) {
+			merged.add((IFile) nonJavaFiles[i]);
+		}
+		return merged.toArray(new IFile[merged.size()]);
+	}
+	
+	private void count(IFile file, CountResult result, List<CategoryStepDto> categoryResult) {
+		CountResult count = countFile(file, categoryResult);
+		if (count != null) {
+			result.setStep(result.getStep() + count.getStep());
+			result.setNon(result.getNon() + count.getNon());
+			result.setComment(result.getComment() + count.getComment());
+		}	}
 
 	/**
 	 * @see ViewPart#setFocus

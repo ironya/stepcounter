@@ -51,12 +51,12 @@ public class DiffCounter {
 
 	private static void diffFolder(DiffFolderResult parent, File oldFolder,
 			File newFolder) {
-		File[] oldFiles = oldFolder.listFiles();
+		File[] oldFiles = Util.exceptGeneratedFile(oldFolder.listFiles());
 		if (oldFiles == null) {
 			oldFiles = new File[0];
 		}
 
-		File[] newFiles = newFolder.listFiles();
+		File[] newFiles = Util.exceptGeneratedFile(newFolder.listFiles());
 
 		for (File newFile : newFiles) {
 			if (DiffCounterUtil.isIgnore(newFile)) {

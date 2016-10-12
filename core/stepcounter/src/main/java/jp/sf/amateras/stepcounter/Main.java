@@ -70,7 +70,7 @@ public class Main {
 	/** １ファイルをカウント */
 	private CountResult[] count(File file) throws IOException {
 		if(file.isDirectory()){
-			File[] files = file.listFiles();
+			File[] files = Util.exceptGeneratedFile(file.listFiles());
 			ArrayList<CountResult> list = new ArrayList<CountResult>();
 			for(int i=0;i<files.length;i++){
 				CountResult[] results = count(files[i]);

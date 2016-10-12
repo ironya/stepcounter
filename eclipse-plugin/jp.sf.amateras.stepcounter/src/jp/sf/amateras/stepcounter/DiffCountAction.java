@@ -16,6 +16,8 @@ import org.eclipse.ui.IWorkbenchPart;
 import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 
+import jp.sf.amateras.stepcounter.preferences.PreferenceConstants;
+
 /**
  * 差分カウントのアクション。
  *
@@ -29,6 +31,9 @@ public class DiffCountAction implements IObjectActionDelegate {
 	 * {@inheritDoc}
 	 */
 	public void run(IAction action) {
+		// POJO の core 系クラスからの参照用
+		System.setProperty(PreferenceConstants.P_IGNORE_GENERATED_FILE, Boolean.toString(StepCounterPlugin
+				.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE)));
 
 		String initialPath = null;
 		Object obj = ((IStructuredSelection) this.selection).getFirstElement();

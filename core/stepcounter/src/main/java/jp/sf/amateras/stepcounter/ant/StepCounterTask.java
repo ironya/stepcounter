@@ -19,13 +19,6 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
-import jp.sf.amateras.stepcounter.CountResult;
-import jp.sf.amateras.stepcounter.StepCounter;
-import jp.sf.amateras.stepcounter.StepCounterFactory;
-import jp.sf.amateras.stepcounter.Util;
-import jp.sf.amateras.stepcounter.format.FormatterFactory;
-import jp.sf.amateras.stepcounter.format.ResultFormatter;
-
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
 import org.apache.tools.ant.Project;
@@ -33,6 +26,13 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ResourceCollection;
+
+import jp.sf.amateras.stepcounter.CountResult;
+import jp.sf.amateras.stepcounter.StepCounter;
+import jp.sf.amateras.stepcounter.StepCounterFactory;
+import jp.sf.amateras.stepcounter.Util;
+import jp.sf.amateras.stepcounter.format.FormatterFactory;
+import jp.sf.amateras.stepcounter.format.ResultFormatter;
 
 /**
  * ステップカウンタを実行するAntタスクです。
@@ -189,8 +189,8 @@ public class StepCounterTask extends Task {
 				} catch (IOException e) {
 					throw new BuildException("I/O Error: " + baseDir, e);
 				}
-
-        		for (String name : ds.getIncludedFiles()) {
+ 
+        		for (String name : Util.exceptGeneratedFile(basePath, ds.getIncludedFiles())) {
         			File file = new File(baseDir, name);
         			try {
         				CountResult result = count(file);

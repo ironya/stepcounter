@@ -75,4 +75,18 @@
          </action>
       </objectContribution>
    </extension>
+   <extension
+         point="org.eclipse.core.runtime.preferences">
+      <initializer
+            class="jp.sf.amateras.stepcounter.preferences.PreferenceInitializer">
+      </initializer>
+   </extension>
+   <extension
+         point="org.eclipse.ui.preferencePages">
+      <page
+            class="jp.sf.amateras.stepcounter.preferences.StepCounterPreferencePage"
+            id="jp.sf.amateras.stepcounter.preferences.StepCounterPreferencePage"
+            name="StepCounter">
+      </page>
+   </extension>
 </plugin>
