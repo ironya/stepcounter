@@ -86,7 +86,7 @@
       <page
             class="jp.sf.amateras.stepcounter.preferences.StepCounterPreferencePage"
             id="jp.sf.amateras.stepcounter.preferences.StepCounterPreferencePage"
-            name="StepCounter">
+            name="%pluginNamePref">
       </page>
    </extension>
 </plugin>

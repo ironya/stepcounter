@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -130,6 +131,8 @@ public class StepCounterTask extends Task {
 	 */
 	public void execute() throws BuildException {
     	ResultFormatter formatter = FormatterFactory.getFormatter(format);
+    	
+    	printSystemProperties();
 
     	if (encoding != null) Util.setFileEncoding(encoding);
 
@@ -144,7 +147,7 @@ public class StepCounterTask extends Task {
 	    	} else {
 	    		out = System.out;
 	    	}
-
+	    	Pattern[] filenamePatterns = Util.createFilenamePatterns();
 	    	Map<FileSet, ResourceCollection> fsList = new LinkedHashMap<FileSet, ResourceCollection>();
 	    	for (ResourceCollection rc : rcs) {
 	    		if (rc instanceof FileList && rc.isFilesystemOnly()) {
@@ -192,6 +195,9 @@ public class StepCounterTask extends Task {
  
         		for (String name : Util.exceptGeneratedFile(basePath, ds.getIncludedFiles())) {
         			File file = new File(baseDir, name);
+        			if (Util.matchToAny(filenamePatterns, null, file)) {
+        				continue;
+        			}
         			try {
         				CountResult result = count(file);
         				if (showDirectory) {
@@ -236,7 +242,19 @@ public class StepCounterTask extends Task {
     	}
     }
 
-    private CountResult count(File file) throws IOException {
+    private void printSystemProperties() {
+    	System.out.println("## Print Environmental System Properties ##");
+    	System.out.println(Util.IGNORE_FILENAME_PATTERNS + "=" + Util.ignoreFilenamePatterns());
+    	System.out.println(Util.IGNORE_GENERATED_FILE + "=" + Util.ignoreGeneratedFile());
+    	System.out.println(Util.FILENAME_PATTERNS + "=" + Util.getFilenamePatternsString());
+    	System.out.println(Util.EXTENSION_PAIRS + "=" + Util.getExtensionPairsString());
+    	
+    	for(Pattern p : Util.createFilenamePatterns()) {
+    		System.out.println(p.pattern());
+    	}
+	}
+
+	private CountResult count(File file) throws IOException {
 		StepCounter counter = StepCounterFactory.getCounter(file.getName());
 		if (counter != null) {
 			return counter.count(file, Util.getFileEncoding(file));

@@ -8,12 +8,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.regex.Pattern;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
-import org.eclipse.core.runtime.IStatus;
-import org.eclipse.core.runtime.Status;
 import org.eclipse.jdt.core.ICompilationUnit;
 import org.eclipse.jdt.core.IPackageFragment;
 import org.eclipse.jface.viewers.ISelection;
@@ -41,7 +40,6 @@ import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
 import jp.sf.amateras.stepcounter.format.ExcelFormatter;
-import jp.sf.amateras.stepcounter.preferences.PreferenceConstants;
 
 /**
  * カウント結果を表示するためのViewPart
@@ -77,6 +75,8 @@ public class StepCountView extends ViewPart {
 	private HashMap<String, IFile>	files		= new HashMap<String, IFile>();
 
 	private List<CountResult>		results		= new ArrayList<CountResult>();
+	
+	private Pattern[] filenamePatterns;
 
 	/**
 	 * コンストラクタ
@@ -255,13 +255,15 @@ public class StepCountView extends ViewPart {
 		if (selection != null && selection instanceof IStructuredSelection) {
 			IStructuredSelection iSel = (IStructuredSelection)selection;
 
-			@SuppressWarnings("unchecked")
-			Iterator<Object> ite = iSel.iterator();
+			//@SuppressWarnings("unchecked")
+			Iterator<?> ite = iSel.iterator();
 
 			long totalStep = 0;
 			long totalComment = 0;
 			long totalNone = 0;
 			List<CategoryStepDto> categoryResult = new ArrayList<CategoryStepDto>();
+
+			filenamePatterns = Util.createFilenamePatterns();
 
 			while (ite.hasNext()) {
 				Object obj = ite.next();
@@ -347,6 +349,11 @@ public class StepCountView extends ViewPart {
 		if(files.containsValue(file)){
 			return null;
 		}
+		if (filenamePatterns != null && Util.ignoreFilenamePatterns()) {
+			if (Util.matchToAny(filenamePatterns, file.getFullPath().toString())) {
+				return null;
+			}
+		}
 		try {
 			StepCounter counter = StepCounterFactory.getCounter(file.getName());
 			if (counter != null) {
@@ -417,7 +424,7 @@ public class StepCountView extends ViewPart {
 			List<CategoryStepDto> categoryResult) {
 		CountResult result = new CountResult();
 		try {
-			IResource[] children = exceptGeneratedResource(Util.PRIOR_EXTENSION_PAIRS, container.members());
+			IResource[] children = exceptGeneratedResource(container.members());
 			for (int i = 0; i < children.length; i++) {
 				if (children[i] instanceof IFile) {
 					CountResult count = countFile((IFile)children[i],
@@ -442,12 +449,13 @@ public class StepCountView extends ViewPart {
 		return result;
 	}
 
-	private IResource[] exceptGeneratedResource(Map<String, String> extensionPairs, IResource[] members) {
+	private IResource[] exceptGeneratedResource(IResource[] members) {
 		if (members == null || members.length == 0)
 			return members;
-		if (!StepCounterPlugin.getDefault().getPreferenceStore()
-				.getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE))
+		if (!Util.ignoreGeneratedFile())
 			return members;
+		
+		Map<String, String> extensionPairs = Util.createExtensionPairs();
 		
 		List<IResource> excepted = new ArrayList<IResource>(Arrays.asList(members));
 		List<String> priors = gatherPriorExtensionFiles(extensionPairs, members);

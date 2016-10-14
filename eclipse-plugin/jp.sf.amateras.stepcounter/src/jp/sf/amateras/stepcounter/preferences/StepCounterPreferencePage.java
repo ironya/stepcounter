@@ -1,9 +1,10 @@
 package jp.sf.amateras.stepcounter.preferences;
 
-import org.eclipse.jface.preference.*;
-import org.eclipse.swt.custom.TableEditor;
-import org.eclipse.ui.IWorkbenchPreferencePage;
+import org.eclipse.jface.preference.BooleanFieldEditor;
+import org.eclipse.jface.preference.FieldEditorPreferencePage;
 import org.eclipse.ui.IWorkbench;
+import org.eclipse.ui.IWorkbenchPreferencePage;
+
 import jp.sf.amateras.stepcounter.StepCounterPlugin;
 
 /**
@@ -27,7 +28,7 @@ public class StepCounterPreferencePage
 	public StepCounterPreferencePage() {
 		super(GRID);
 		setPreferenceStore(StepCounterPlugin.getDefault().getPreferenceStore());
-		setDescription("Preference of StepCounter");
+		setDescription(StepCounterPlugin.getResourceString("StepCounterPreference.description")); //$NON-NLS-1$
 	}
 	
 	/**
@@ -38,12 +39,16 @@ public class StepCounterPreferencePage
 	 */
 	public void createFieldEditors() {
 		addField(new BooleanFieldEditor(PreferenceConstants.P_IGNORE_GENERATED_FILE,
-				"&Enable to ignore generated file by some translators.", getFieldEditorParent()));
-		addField(new ExtensionPairsEditor(PreferenceConstants.P_EXTENSION_PAIRS, "Extension pairs for ignoring generated file",
+				StepCounterPlugin.getResourceString("StepCounterPreference.labelEnableIgnoreGeneratedFile"), //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new ExtensionPairsEditor(PreferenceConstants.P_EXTENSION_PAIRS,
+				StepCounterPlugin.getResourceString("StepCounterPreference.labelExtensionPairs"), //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_IGNORE_FILENAME_PATTERNS,
-				"E&nable to ignore filename patterns.", getFieldEditorParent()));
-		addField(new FileNamePatternEditor(PreferenceConstants.P_FILENAME_PATTERNS, "File name patterns to ignore.",
+				StepCounterPlugin.getResourceString("StepCounterPreference.labelEnableIgnoreFilenamePatterns"), //$NON-NLS-1$
+				getFieldEditorParent()));
+		addField(new FileNamePatternEditor(PreferenceConstants.P_FILENAME_PATTERNS,
+				StepCounterPlugin.getResourceString("StepCounterPreference.filenamePatterns"), //$NON-NLS-1$
 				getFieldEditorParent()));
 	}
 

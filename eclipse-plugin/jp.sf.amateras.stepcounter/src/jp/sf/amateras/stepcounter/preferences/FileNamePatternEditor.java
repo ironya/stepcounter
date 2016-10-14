@@ -1,9 +1,5 @@
 package jp.sf.amateras.stepcounter.preferences;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.StringTokenizer;
-
 import org.eclipse.jface.dialogs.Dialog;
 import org.eclipse.jface.dialogs.IDialogConstants;
 import org.eclipse.jface.preference.ListEditor;
@@ -14,10 +10,11 @@ import org.eclipse.swt.graphics.Point;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
+
+import jp.sf.amateras.stepcounter.Util;
 
 public class FileNamePatternEditor extends ListEditor {
 
@@ -31,7 +28,7 @@ public class FileNamePatternEditor extends ListEditor {
 
 		for (String item : items) {
 			if (path.length() > 0) {
-				path.append("|");
+				path.append(Util.FILENAME_PATTERN_SEPARATOR);
 			}
 			path.append(item);
 		}
@@ -51,12 +48,8 @@ public class FileNamePatternEditor extends ListEditor {
 
 	@Override
 	protected String[] parseString(String stringList) {
-		StringTokenizer st = new StringTokenizer(stringList, "|");
-		List<String> values = new ArrayList<String>();
-		while(st.hasMoreTokens()) {
-			values.add(st.nextToken());
-		}
-		return values.toArray(new String[values.size()]);
+		String[] values = stringList.split(Util.FILENAME_PATTERN_SEPARATOR_REGEX);
+		return values;
 	}
 
 	private class PatternDialog extends Dialog {

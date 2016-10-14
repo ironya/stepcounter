@@ -34,6 +34,12 @@ public class StepCountAction implements IObjectActionDelegate {
 			// POJO の core 系クラスからの参照用
 			System.setProperty(PreferenceConstants.P_IGNORE_GENERATED_FILE, Boolean.toString(StepCounterPlugin
 					.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE)));
+			System.setProperty(Util.EXTENSION_PAIRS, StepCounterPlugin
+					.getDefault().getPreferenceStore().getString(PreferenceConstants.P_EXTENSION_PAIRS));
+			System.setProperty(Util.IGNORE_FILENAME_PATTERNS, Boolean.toString(StepCounterPlugin
+					.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_IGNORE_FILENAME_PATTERNS)));
+			System.setProperty(Util.FILENAME_PATTERNS,
+					StepCounterPlugin.getDefault().getPreferenceStore().getString(PreferenceConstants.P_FILENAME_PATTERNS));
 			IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 			window.getActivePage().showView("jp.sf.amateras.stepcounter.StepCountView");
 			IViewReference[] views = window.getActivePage().getViewReferences();

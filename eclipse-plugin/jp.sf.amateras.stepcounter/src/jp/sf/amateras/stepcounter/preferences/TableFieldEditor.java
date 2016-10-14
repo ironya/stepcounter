@@ -16,7 +16,6 @@ import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Control;
-import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
@@ -35,6 +34,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 	private SelectionListener selectionListener;
 	private final String[] columnNames;
 	private final int[] columnWidths;
+	private int tableWidth;
 	
 	public TableFieldEditor() {
 		columnNames = new String[0];
@@ -44,8 +44,16 @@ public abstract class TableFieldEditor extends FieldEditor {
 	public TableFieldEditor(String name, String labelText,
 			String[] columnNames, int[] columnWidths, Composite parent) {
 		init(name, labelText);
+		if (columnNames == null)
+			throw new IllegalArgumentException("columnNames is null");
+		if (columnWidths == null)
+			throw new IllegalArgumentException("columnWidths is null");
+		if (columnNames.length != columnWidths.length)
+			throw new IllegalArgumentException("invalid length equality between columnNames and columnWidth");
 		this.columnNames = columnNames;
 		this.columnWidths = columnWidths;
+		for (int columnWidth : columnWidths)
+			tableWidth += columnWidth;
 		createControl(parent);
 	}
 	
@@ -131,10 +139,10 @@ public abstract class TableFieldEditor extends FieldEditor {
 		gd.horizontalSpan = numColumns;
 		control.setLayoutData(gd);
 
-		Composite composite = new Composite(parent, SWT.NONE);
+		Composite composite = new Composite(parent, SWT.FILL);
 		GridData gridData = new GridData(SWT.FILL, SWT.BEGINNING, true, false);
 		gridData.horizontalSpan = 2;
-		gridData.widthHint = 550;
+		gridData.widthHint = tableWidth;
 		gridData.heightHint = 200;
 		composite.setLayoutData(gridData);
 		composite.setLayout(new GridLayout(2, false));
@@ -143,7 +151,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 		gd = new GridData(GridData.FILL_HORIZONTAL);
 		gd.verticalAlignment = GridData.FILL;
 		gd.horizontalSpan = numColumns - 1;
-		gd.grabExcessHorizontalSpace = true;
+		gd.grabExcessHorizontalSpace = false;
 		gd.grabExcessVerticalSpace = true;
 		table.setLayoutData(gd);
 
@@ -151,6 +159,8 @@ public abstract class TableFieldEditor extends FieldEditor {
 		gd = new GridData();
 		gd.verticalAlignment = GridData.BEGINNING;
 		buttonBox.setLayoutData(gd);
+
+		gridData.widthHint +=  (((GridData) getAddButton().getLayoutData()).widthHint + 30);
 	}
 
 	protected int getNumberOfItems() {
@@ -217,7 +227,6 @@ public abstract class TableFieldEditor extends FieldEditor {
 	public Composite getButtonBoxControl(Composite parent) {
 		if (buttonBox == null) {
 			buttonBox = new Composite(parent, SWT.NULL);
-//			buttonBox.setBackground(Display.getDefault().getSystemColor(SWT.COLOR_WIDGET_BACKGROUND));
 			GridLayout layout = new GridLayout();
 			layout.marginWidth = 0;
 			buttonBox.setLayout(layout);
@@ -253,10 +262,10 @@ public abstract class TableFieldEditor extends FieldEditor {
 					table = null;
 				}
 			});
-			for (String columnName : columnNames) {
+			for (int i=0; i< columnNames.length; i++) {
 				TableColumn tableColumn = new TableColumn(table, SWT.LEAD);
-				tableColumn.setText(columnName);
-				tableColumn.setWidth(100);
+				tableColumn.setText(columnNames[i]);
+				tableColumn.setWidth(columnWidths[i]);
 			}
 			if (columnNames.length > 0) {
 				TableLayout layout = new TableLayout();
