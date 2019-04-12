@@ -19,7 +19,7 @@ import org.eclipse.ui.PlatformUI;
 import jp.sf.amateras.stepcounter.preferences.PreferenceConstants;
 
 /**
- * ·•ªƒJƒEƒ“ƒg‚ÌƒAƒNƒVƒ‡ƒ“B
+ * å·®åˆ†ã‚«ã‚¦ãƒ³ãƒˆã®ã‚¢ã‚¯ã‚·ãƒ§ãƒ³ã€‚
  *
  * @author takanori
  */
@@ -31,7 +31,7 @@ public class DiffCountAction implements IObjectActionDelegate {
 	 * {@inheritDoc}
 	 */
 	public void run(IAction action) {
-		// POJO ‚Ì core ŒnƒNƒ‰ƒX‚©‚ç‚ÌQÆ—p
+		// POJO ã® core ç³»ã‚¯ãƒ©ã‚¹ã‹ã‚‰ã®å‚ç…§ç”¨
 		System.setProperty(Util.IGNORE_GENERATED_FILE, Boolean.toString(StepCounterPlugin
 				.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE)));
 		System.setProperty(Util.EXTENSION_PAIRS, StepCounterPlugin
@@ -79,13 +79,13 @@ public class DiffCountAction implements IObjectActionDelegate {
 	}
 
 	/**
-	 * ·•ª‚Ì”äŠr‘ÎÛ‚ÌƒpƒX‚ğæ“¾‚µ‚Ü‚·B
+	 * å·®åˆ†ã®æ¯”è¼ƒå¯¾è±¡ã®ãƒ‘ã‚¹ã‚’å–å¾—ã—ã¾ã™ã€‚
 	 *
 	 * @param action
 	 * @return
 	 */
 	private String getComparePath(IAction action, String initialPath) {
-		// TODO Action‚ÌID‚É‚æ‚Á‚ÄAƒpƒX‚Ìæ“¾•û–@‚ğ•ÏX
+		// TODO Actionã®IDã«ã‚ˆã£ã¦ã€ãƒ‘ã‚¹ã®å–å¾—æ–¹æ³•ã‚’å¤‰æ›´
 
 		IWorkbenchWindow window = PlatformUI.getWorkbench().getActiveWorkbenchWindow();
 
@@ -93,8 +93,8 @@ public class DiffCountAction implements IObjectActionDelegate {
 //		String wsRootPath = wsRoot.getLocation().toOSString();
 
 		DirectoryDialog dialog = new DirectoryDialog(window.getShell());
-		dialog.setText("·•ª‚Ì”äŠrŒ³‚ğw’è");
-		dialog.setMessage("·•ª‚Ì”äŠrŒ³‚ğw’è‚µ‚Ä‚­‚¾‚³‚¢B");
+		dialog.setText("å·®åˆ†ã®æ¯”è¼ƒå…ƒã‚’æŒ‡å®š");
+		dialog.setMessage("å·®åˆ†ã®æ¯”è¼ƒå…ƒã‚’æŒ‡å®šã—ã¦ãã ã•ã„ã€‚");
 		dialog.setFilterPath(initialPath);
 
 		String comparePath = dialog.open();

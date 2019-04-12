@@ -1,4 +1,6 @@
 eclipse.preferences.version=1
 encoding//src/test/resources/jp/sf/amateras/stepcounter/diffcount/DiffCounterTest_testCount_java.txt=UTF-8
-encoding/<project>=Windows-31J
+encoding/<project>=UTF-8
 encoding/README.md=UTF-8
+encoding/command.bat=MS932
+encoding/eclipse.bat=MS932

@@ -12,26 +12,26 @@ import org.eclipse.ui.PlatformUI;
 import jp.sf.amateras.stepcounter.preferences.PreferenceConstants;
 
 /**
- * uƒXƒeƒbƒv”‚ğƒJƒEƒ“ƒgvƒƒjƒ…[
+ * ã€Œã‚¹ãƒ†ãƒƒãƒ—æ•°ã‚’ã‚«ã‚¦ãƒ³ãƒˆã€ãƒ¡ãƒ‹ãƒ¥ãƒ¼
  */
 public class StepCountAction implements IObjectActionDelegate {
 
 //	private IWorkbenchPart targetPart;
 	private ISelection selection;
 
-	/* (”ñ Javadoc)
+	/* (é Javadoc)
 	 * @see org.eclipse.ui.IObjectActionDelegate#setActivePart(org.eclipse.jface.action.IAction, org.eclipse.ui.IWorkbenchPart)
 	 */
 	public void setActivePart(IAction action, IWorkbenchPart targetPart) {
 //		this.targetPart = targetPart;
 	}
 
-	/* (”ñ Javadoc)
+	/* (é Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#run(org.eclipse.jface.action.IAction)
 	 */
 	public void run(IAction action) {
 		try {
-			// POJO ‚Ì core ŒnƒNƒ‰ƒX‚©‚ç‚ÌQÆ—p
+			// POJO ã® core ç³»ã‚¯ãƒ©ã‚¹ã‹ã‚‰ã®å‚ç…§ç”¨
 			System.setProperty(PreferenceConstants.P_IGNORE_GENERATED_FILE, Boolean.toString(StepCounterPlugin
 					.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE)));
 			System.setProperty(Util.EXTENSION_PAIRS, StepCounterPlugin
@@ -54,7 +54,7 @@ public class StepCountAction implements IObjectActionDelegate {
 		}
 	}
 
-	/* (”ñ Javadoc)
+	/* (é Javadoc)
 	 * @see org.eclipse.ui.IActionDelegate#selectionChanged(org.eclipse.jface.action.IAction, org.eclipse.jface.viewers.ISelection)
 	 */
 	public void selectionChanged(IAction action, ISelection selection) {
