@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 /**
- * Šeíƒ†[ƒeƒBƒŠƒeƒBƒƒ\ƒbƒh‚ğ’ñ‹Ÿ‚·‚éƒNƒ‰ƒX
+ * ï¿½eï¿½íƒ†ï¿½[ï¿½eï¿½Bï¿½ï¿½ï¿½eï¿½Bï¿½ï¿½ï¿½\ï¿½bï¿½hï¿½ï¿½ñ‹Ÿ‚ï¿½ï¿½ï¿½Nï¿½ï¿½ï¿½X
  */
 public class Util {
 
@@ -32,11 +32,11 @@ public class Util {
 	public static final String FILENAME_PATTERN_SEPARATOR_REGEX = "\\|\\|\\|";
 	
 	/**
-	 * •¶š—ñ‚ğw’è•¶š—ñ‚Å•ªŠ„‚µA”z—ñ‚Å•Ô‹p‚µ‚Ü‚·B
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½è•¶ï¿½ï¿½ï¿½ï¿½Å•ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Aï¿½zï¿½ï¿½Å•Ô‹pï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
 	 *
-	 * @param str •¶š—ñ
-	 * @param del ‹æØ‚è•¶š—ñ
-	 * @return •ªŠ„‚³‚ê‚½•¶š—ñ‚ğŠi”[‚µ‚½”z—ñ
+	 * @param str ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param del ï¿½ï¿½Ø‚è•¶ï¿½ï¿½ï¿½ï¿½
+	 * @return ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½iï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½zï¿½ï¿½
 	 */
 	public static String[] split(String str,String del){
 		ArrayList<String> list = new ArrayList<String>();
@@ -51,12 +51,12 @@ public class Util {
 	}
 
 	/**
-	 * “n‚³‚ê‚½•¶š—ñ‚ğw’èƒGƒ“ƒR[ƒfƒBƒ“ƒO‚Ìw’èƒoƒCƒg”‚Åæ“ª‚©‚çØ‚èo‚·B
-	 * ƒJƒ^ƒJƒi‚Ì”»’è‚Í³‚µ‚­s‚¤‚±‚Æ‚ª‚Å‚«‚È‚¢B
+	 * ï¿½nï¿½ï¿½ï¿½ê‚½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½wï¿½ï¿½Gï¿½ï¿½ï¿½Rï¿½[ï¿½fï¿½Bï¿½ï¿½ï¿½Oï¿½Ìwï¿½ï¿½oï¿½Cï¿½gï¿½ï¿½ï¿½Åæ“ªï¿½ï¿½ï¿½ï¿½Ø‚ï¿½oï¿½ï¿½ï¿½B
+	 * ï¿½Jï¿½^ï¿½Jï¿½iï¿½Ì”ï¿½ï¿½ï¿½Íï¿½ï¿½ï¿½ï¿½ï¿½ï¿½sï¿½ï¿½ï¿½ï¿½ï¿½Æ‚ï¿½ï¿½Å‚ï¿½ï¿½È‚ï¿½ï¿½B
 	 *
-	 * @param   s    Ø‚èo‚µ‘ÎÛ•¶š—ñ
-	 * @param   cnt  Ø‚èo‚µƒoƒCƒg”
-	 * @return  Œ‹‰Ê•¶š—ñ
+	 * @param   s    ï¿½Ø‚ï¿½oï¿½ï¿½ï¿½ÎÛ•ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @param   cnt  ï¿½Ø‚ï¿½oï¿½ï¿½ï¿½oï¿½Cï¿½gï¿½ï¿½
+	 * @return  ï¿½ï¿½ï¿½Ê•ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	public static String substring(String str,int length){
 		String resultStr = null;
@@ -65,17 +65,17 @@ public class Util {
 		int loopCnt     = length;
 		byte[] resBytes = new byte[length];
 		byte[] bytes    = str.getBytes();
-		// w’èƒoƒCƒg”ˆÈ‰º‚Ìê‡‚Í‚»‚Ì‚Ü‚Ü•Ô‹p
+		// ï¿½wï¿½ï¿½oï¿½Cï¿½gï¿½ï¿½ï¿½È‰ï¿½ï¿½Ìê‡ï¿½Í‚ï¿½ï¿½Ì‚Ü‚Ü•Ô‹p
 		if(bytes.length <= length) {
 			return str;
 		}
 		for (int i=0; i < length; i++) {
 			if (bytes[i] < 0) {
-				// bytes[i]‚Ì8ƒrƒbƒg–Ú‚ª—§‚Á‚Ä‚¢‚é(‘SŠp)
+				// bytes[i]ï¿½ï¿½8ï¿½rï¿½bï¿½gï¿½Ú‚ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä‚ï¿½ï¿½ï¿½(ï¿½Sï¿½p)
 				zenCnt ++;
 			}
 		}
-		// ‘SŠpƒoƒCƒg‚Ì”‚ªŠï”‚Ìê‡
+		// ï¿½Sï¿½pï¿½oï¿½Cï¿½gï¿½Ìï¿½ï¿½ï¿½ï¿½ï”ï¿½Ìê‡
 		if(zenCnt % 2 == 1) {
 			loopCnt--;
 		}
@@ -87,10 +87,10 @@ public class Util {
 	}
 
 	/**
-	 * ˆø”‚Å“n‚µ‚½•¶š—ñ‚ÌƒoƒCƒg’·‚ğ•Ô‚µ‚Ü‚·B
+	 * ï¿½ï¿½ï¿½ï¿½ï¿½Å“nï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ìƒoï¿½Cï¿½gï¿½ï¿½ï¿½ï¿½Ô‚ï¿½ï¿½Ü‚ï¿½ï¿½B
 	 *
-	 * @param str •¶š—ñ
-	 * @return ƒoƒCƒg’·
+	 * @param str ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @return ï¿½oï¿½Cï¿½gï¿½ï¿½
 	 */
 	public static int getByteLength(String str){
 		try {
@@ -102,10 +102,10 @@ public class Util {
 	}
 
 	/**
-	 * HTML/XML‚Ì“Áê•¶š‚ğÀ‘ÔQÆ‚É•ÏŠ·‚µ‚Ü‚·B
+	 * HTML/XMLï¿½Ì“ï¿½ï¿½ê•¶ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÔQï¿½Æ‚É•ÏŠï¿½ï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
 	 *
-	 * @param str •¶š—ñ
-	 * @return •ÏŠ·Œã‚Ì•¶š—ñ
+	 * @param str ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+	 * @return ï¿½ÏŠï¿½ï¿½ï¿½Ì•ï¿½ï¿½ï¿½ï¿½ï¿½
 	 */
 	public static String escapeXML(String str){
 		str.replaceAll("&" ,"&amp;");
@@ -116,9 +116,9 @@ public class Util {
 	}
 
 	/**
-	 * ƒXƒgƒŠ[ƒ€‚ğ‹­§“I‚ÉƒNƒ[ƒY‚µ‚Ü‚·B
+	 * ï¿½Xï¿½gï¿½ï¿½ï¿½[ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Iï¿½ÉƒNï¿½ï¿½ï¿½[ï¿½Yï¿½ï¿½ï¿½Ü‚ï¿½ï¿½B
 	 *
-	 * @param closeable ƒXƒgƒŠ[ƒ€
+	 * @param closeable ï¿½Xï¿½gï¿½ï¿½ï¿½[ï¿½ï¿½
 	 */
 	public static void close(Closeable closeable){
 		if(closeable != null){
