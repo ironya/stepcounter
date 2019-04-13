@@ -68,6 +68,17 @@ public class StepCounterFactory {
 	}
 
 	/**
+	 * テキストファイルとして行数のみをカウントするカウンタを作成します。
+	 * @param name ファイルタイプに設定する名前
+	 * @return 作成したカウンタ
+	 */
+	private static DefaultStepCounter createTextCounter(String name) {
+		DefaultStepCounter counter = new DefaultStepCounter();
+		counter.setFileType(name);
+		return counter;
+	}
+
+	/**
 	 * ステップカウンタのインスタンスを取得します。
 	 * 未対応の形式の場合、nullを返します。
 	 *
@@ -85,7 +96,7 @@ public class StepCounterFactory {
 		} else if(fileName.endsWith(".sqlj")){
 			// SQLJ用カウンタを作成
 			return createJavaCounter("SQLJ");
-			
+
 		} else if(fileName.endsWith(".scala")){
 			// Scala用カウンタを作成
 			return createJavaCounter("Scala");
@@ -226,6 +237,10 @@ public class StepCounterFactory {
 			// DTD用カウンタを作成
 			return createXMLCounter("DTD");
 
+		} else if(fileName.endsWith(".yml")) {
+			// YAML用カウンタを作成
+			return createXMLCounter("YAML");
+
 		} else if(fileName.endsWith(".tld")) {
 			// TLD用カウンタを作成
 			return createXMLCounter("TLD");
@@ -335,7 +350,7 @@ public class StepCounterFactory {
         } else if(fileName.endsWith(".as")){
             // ActionScript3用カウンタを作成
             return createJavaCounter(".as");
-            
+
         } else if(fileName.endsWith(".mxml")){
         	// MXML用カウンタを作成
         	return createXMLCounter(".mxml");
@@ -343,6 +358,15 @@ public class StepCounterFactory {
 		} else if(fileName.endsWith(".groovy")){
 			// Groovy用カウンタを作成
 			return createJavaCounter("Groovy");
+
+		} else if(fileName.endsWith(".txt") || fileName.endsWith(".env") || fileName.endsWith(".mf")
+					|| fileName.endsWith(".csv") || fileName.endsWith(".tsv")) {
+			// テキストファイルとして行数のみカウントする (実行行数と合計行数が同じ値になる想定)
+			return createTextCounter("TEXT");
+
+		} else if(fileName.endsWith(".conf") || fileName.endsWith(".options")) {
+			// 構成定義系ファイルとしてカウントする ("#" を行コメントとする)
+			return createShellCounter("Config");
 
 		} else {
 			return null;
