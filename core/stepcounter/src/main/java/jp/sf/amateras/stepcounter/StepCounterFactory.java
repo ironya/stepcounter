@@ -82,6 +82,10 @@ public class StepCounterFactory {
 			// Java用カウンタを作成
 			return createJavaCounter("Java");
 
+		} else if(fileName.endsWith(".sqlj")){
+			// SQLJ用カウンタを作成
+			return createJavaCounter("SQLJ");
+			
 		} else if(fileName.endsWith(".scala")){
 			// Scala用カウンタを作成
 			return createJavaCounter("Scala");
@@ -146,7 +150,7 @@ public class StepCounterFactory {
 			return createVBCounter("vbs");
 
 		} else if(fileName.endsWith(".bas") || fileName.endsWith(".frm") || fileName.endsWith(".cls")){
-				// VB用カウンタを作成
+			// VB用カウンタを作成
 			return createVBCounter("VB");
 
 		} else if(fileName.endsWith(".vb")){

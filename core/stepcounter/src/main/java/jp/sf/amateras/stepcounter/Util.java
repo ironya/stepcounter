@@ -2,7 +2,16 @@ package jp.sf.amateras.stepcounter;
 
 import java.io.Closeable;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 /**
  * 各種ユーティリティメソッドを提供するクラス
@@ -12,6 +21,16 @@ public class Util {
 	private static String fileEncoding = null;
 	private static FileEncodingDetector fileEncodingDetector = null;
 
+	public static final String IGNORE_GENERATED_FILE = "ignore.generated.file";
+	public static final String EXTENSION_PAIRS = "extension.pairs";
+	public static final String IGNORE_FILENAME_PATTERNS = "ignore.filename.patterns";
+	public static final String FILENAME_PATTERNS = "filename.patterns";
+	public static final String EXTENSION_SEPARATOR = ",";
+	public static final String PAIR_SEPARATOR = "|";
+	public static final String PAIR_SEPARATOR_REGEX = "\\|";
+	public static final String FILENAME_PATTERN_SEPARATOR = "|||";
+	public static final String FILENAME_PATTERN_SEPARATOR_REGEX = "\\|\\|\\|";
+	
 	/**
 	 * 文字列を指定文字列で分割し、配列で返却します。
 	 *
@@ -132,5 +151,170 @@ public class Util {
 		}
 
 		return System.getProperty("file.encoding");
+	}
+	
+	public static String[] exceptGeneratedFile(String[] filePaths) {
+		return exceptGeneratedFile(null, filePaths);
+	}
+	
+	public static File[] exceptGeneratedFile(File[] files) {
+		return exceptGeneratedFile(null, files);
+	}
+	
+	public static String[] exceptGeneratedFile(String basePath, String[] filePaths) {
+		if (!Boolean.getBoolean(IGNORE_GENERATED_FILE)) {
+			return filePaths;
+		}
+		if (filePaths == null) {
+			return filePaths;
+		}
+		File[] files = new File[filePaths.length];
+		for(int i=0; i<files.length; i++) {
+			files[i] = new File(filePaths[i]);
+		}
+		File basePathFile = basePath == null ? null : new File(basePath);
+		File[] exceptedFiles = exceptGeneratedFile(basePathFile, files);
+		String[] exceptedPaths = new String[exceptedFiles.length];
+		for (int i=0; i<exceptedPaths.length; i++) {
+			exceptedPaths[i] = exceptedFiles[i].getPath();
+		}
+		return exceptedPaths;
+	}
+	
+	public static Map<String, String> createExtensionPairs() {
+		Map<String, String> pairs = new LinkedHashMap<String, String>();
+		String source = System.getProperty(EXTENSION_PAIRS);
+		if (source == null || source.length() == 0) {
+			return pairs;
+		}
+		String[] rows = source.split(PAIR_SEPARATOR_REGEX);
+		for(String row : rows) {
+			String[] values = row.split(EXTENSION_SEPARATOR);
+			if (values.length >= 2) {
+				pairs.put(values[0], values[1]);
+			}
+		}
+		return pairs;
+	}
+
+	public static boolean ignoreFilenamePatterns() {
+		return Boolean.getBoolean(IGNORE_FILENAME_PATTERNS);
+	}
+	
+	public static boolean ignoreGeneratedFile() {
+		return Boolean.getBoolean(IGNORE_GENERATED_FILE);
+	}
+	
+	public static String getExtensionPairsString() {
+		return System.getProperty(EXTENSION_PAIRS);
+	}
+	
+	public static String getFilenamePatternsString() {
+		return System.getProperty(FILENAME_PATTERNS);
+	}
+	
+	public static File[] exceptGeneratedFile(File basePathFile, File[] files) {
+		if (!ignoreGeneratedFile()) {
+			return files;
+		}
+		if (files == null) {
+			return files;
+		}
+		Map<String, String> extensionPairs = createExtensionPairs();
+		List<File> fileList = new ArrayList<File>(Arrays.asList(files));
+		List<File> priors = gatherPriorExtensionFiles(extensionPairs, basePathFile, files);
+		for (Iterator<File> itr = fileList.iterator(); itr.hasNext();) {
+			File file = itr.next();
+			if (!(basePathFile == null ? file.isFile() : new File(basePathFile, file.getPath()).isFile())) {
+				continue;
+			}
+			String fileExtension = selectExtension(file);
+			if (extensionPairs.containsValue(fileExtension)) {
+				String filePath = file.getPath();
+				String filePathWithoutExtension = filePath.substring(0, filePath.length() - fileExtension.length());
+				for (Entry<String, String> extensionPair : extensionPairs.entrySet()) {
+					if (!fileExtension.equals(extensionPair.getValue())) {
+						continue;
+					}
+					if (priors.contains(new File(filePathWithoutExtension + extensionPair.getKey()))) {
+						itr.remove();
+						break;
+					}
+				}
+			}
+		}
+		return fileList.toArray(new File[fileList.size()]);
+	}
+
+	private static List<File> gatherPriorExtensionFiles(Map<String, String> extensionPairs, File basePathFile, File[] files) {
+		List<File> priors = new ArrayList<File>();
+		for(File file : files) {
+			if (basePathFile == null ? file.isFile() : new File(basePathFile, file.getPath()).isFile()) {
+				String extension = selectExtension(file);
+				if (extensionPairs.containsKey(extension)) {
+					priors.add(file);
+				}
+			}
+		}
+		return priors;
+	}
+
+	private static String selectExtension(File file) {
+		String path = file.getPath();
+		int lastPeriodIndex = path.lastIndexOf('.');
+		return lastPeriodIndex > 0 ? path.substring(lastPeriodIndex) : "";
+	}
+	
+	public static boolean matchToAny(Pattern[] patterns, File parent, File file) {
+		if (!Util.ignoreFilenamePatterns()) {
+			return false;
+		}
+		File target = parent == null ? file : new File(parent, file.getPath());
+		if (!target.isFile()) {
+			return false;
+		}
+		String path;
+		try {
+			path = target.getCanonicalPath();
+		} catch (IOException e) {
+			path = target.getAbsolutePath();
+		}
+		return matchToAny(patterns, path);
+	}
+	
+	public static boolean matchToAny(Pattern[] patterns, String value) {
+		for(Pattern pattern : patterns) {
+			if (pattern.matcher(value).matches()) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static Pattern[] createFilenamePatterns() {
+		String filenamePatternsString = System.getProperty(FILENAME_PATTERNS);
+		if (filenamePatternsString == null) {
+			return new Pattern[0];
+		}
+		String[] filenamePatterns = filenamePatternsString.split(FILENAME_PATTERN_SEPARATOR_REGEX);
+		return createPatterns(filenamePatterns);
+	}
+	
+	public static Pattern[] createPatterns(String[] patternStrings) {
+		if (patternStrings == null) 
+			return new Pattern[0];
+		if (patternStrings.length == 1 && patternStrings[0].trim().length() == 0) {
+			return new Pattern[0];
+		}
+		List<Pattern> patterns = new ArrayList<Pattern>(patternStrings.length);
+		for(String regex : patternStrings) {
+			try {
+				patterns.add(Pattern.compile(regex));
+			} catch (PatternSyntaxException e) {
+				System.err.println("Ignore regex pattern:\"" + regex + "\" : cause by exception as follows");
+				e.printStackTrace();
+			}
+		}
+		return patterns.toArray(new Pattern[patterns.size()]);
 	}
 }

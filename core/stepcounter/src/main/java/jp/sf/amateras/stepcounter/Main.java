@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import jp.sf.amateras.stepcounter.format.FormatterFactory;
 import jp.sf.amateras.stepcounter.format.ResultFormatter;
@@ -19,6 +20,8 @@ public class Main {
 	private OutputStream output = System.out;
 	private boolean showDirectory = false;
 
+	private Pattern[] filenamePatterns;
+	
 	/**
 	 * 引数で指定したディレクトリからの階層を表示するか設定します
 	 *
@@ -65,6 +68,7 @@ public class Main {
 		if(formatter == null){
 			formatter = FormatterFactory.getFormatter("");
 		}
+		filenamePatterns = Util.createFilenamePatterns();
 		// １ファイル or １ディレクトリずつカウント
 		ArrayList<CountResult> list = new ArrayList<CountResult>();
 		for(int i=0;i<files.length;i++){
@@ -90,7 +94,7 @@ public class Main {
 	/** １ファイルをカウント */
 	private CountResult[] count(File file) throws IOException {
 		if(file.isDirectory()){
-			File[] files = file.listFiles();
+			File[] files = Util.exceptGeneratedFile(null, file.listFiles());
 			ArrayList<CountResult> list = new ArrayList<CountResult>();
 			for(int i=0;i<files.length;i++){
 				CountResult[] results = count(files[i]);
@@ -100,14 +104,13 @@ public class Main {
 			}
 			return (CountResult[])list.toArray(new CountResult[list.size()]);
 		} else {
+			if(Util.matchToAny(filenamePatterns, null, file)) {
+				return new CountResult[0];
+			}
 			StepCounter counter = StepCounterFactory.getCounter(file.getName());
 			if(counter!=null){
 				CountResult result = counter.count(file, Util.getFileEncoding(file));
-				if(result == null){
-					return new CountResult[]{};
-				} else {
-					return new CountResult[]{result};
-				}
+				return new CountResult[]{result};
 			} else {
 				// 未対応の形式の場合は形式にnullを設定して返す
 				return new CountResult[]{

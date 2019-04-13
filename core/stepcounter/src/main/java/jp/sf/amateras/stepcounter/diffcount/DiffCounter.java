@@ -1,6 +1,7 @@
 package jp.sf.amateras.stepcounter.diffcount;
 
 import java.io.File;
+import java.util.regex.Pattern;
 
 import jp.sf.amateras.stepcounter.Util;
 import jp.sf.amateras.stepcounter.diffcount.diff.DiffEngine;
@@ -30,6 +31,7 @@ public class DiffCounter {
 //		return DiffCounterUtil.getFileEncoding(file);
 //	}
 
+	
 	/**
 	 * 2つのディレクトリ配下のソースコードの差分をカウントします。
 	 *
@@ -44,25 +46,30 @@ public class DiffCounter {
 		DiffFolderResult root = new DiffFolderResult(null);
 		root.setName(newRoot.getName());
 
-		diffFolder(root, oldRoot, newRoot);
+		Pattern[] filenamePatterns = Util.createFilenamePatterns();
+		diffFolder(root, oldRoot, newRoot, filenamePatterns);
 
 		return root;
 	}
 
 	private static void diffFolder(DiffFolderResult parent, File oldFolder,
-			File newFolder) {
-		File[] oldFiles = oldFolder.listFiles();
+			File newFolder, Pattern[] filenamePatterns) {
+		File[] oldFiles = Util.exceptGeneratedFile(null, oldFolder.listFiles());
 		if (oldFiles == null) {
 			oldFiles = new File[0];
 		}
 
-		File[] newFiles = newFolder.listFiles();
+		File[] newFiles = Util.exceptGeneratedFile(null, newFolder.listFiles());
 
 		for (File newFile : newFiles) {
 			if (DiffCounterUtil.isIgnore(newFile)) {
 				continue;
 			}
 
+			if (Util.matchToAny(filenamePatterns, null, newFile)) {
+				continue;
+			}
+			
 			boolean found = false;
 
 			for (File oldFile : oldFiles) {
@@ -90,7 +97,7 @@ public class DiffCounter {
 				DiffFolderResult newParent = (DiffFolderResult)parent.getChildren().get(
 						parent.getChildren().size() - 1);
 				diffFolder(newParent, new File(oldFolder, newFile.getName()),
-						newFile);
+						newFile, filenamePatterns);
 			} else {
 
 			}
@@ -99,6 +106,10 @@ public class DiffCounter {
 		// 削除されたフォルダを抽出。二回まわすのは非効率ですが…
 		for (File oldFile : oldFiles) {
 			if (DiffCounterUtil.isIgnore(oldFile)) {
+				continue;
+			}
+
+			if (Util.matchToAny(filenamePatterns, null, oldFile)) {
 				continue;
 			}
 

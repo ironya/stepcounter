@@ -17,3 +17,5 @@ Bundle-Localization: plugin
 Bundle-ActivationPolicy: lazy
 Bundle-ClassPath: lib/stepcounter-3.0.4-jar-with-dependencies.jar,
  .
+Export-Package: jp.sf.amateras.stepcounter,
+ jp.sf.amateras.stepcounter.preferences

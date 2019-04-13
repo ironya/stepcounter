@@ -18,13 +18,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
-import jp.sf.amateras.stepcounter.CountResult;
-import jp.sf.amateras.stepcounter.StepCounter;
-import jp.sf.amateras.stepcounter.StepCounterFactory;
-import jp.sf.amateras.stepcounter.Util;
-import jp.sf.amateras.stepcounter.format.FormatterFactory;
-import jp.sf.amateras.stepcounter.format.ResultFormatter;
+import java.util.regex.Pattern;
 
 import org.apache.tools.ant.BuildException;
 import org.apache.tools.ant.DirectoryScanner;
@@ -33,6 +27,13 @@ import org.apache.tools.ant.Task;
 import org.apache.tools.ant.types.FileList;
 import org.apache.tools.ant.types.FileSet;
 import org.apache.tools.ant.types.ResourceCollection;
+
+import jp.sf.amateras.stepcounter.CountResult;
+import jp.sf.amateras.stepcounter.StepCounter;
+import jp.sf.amateras.stepcounter.StepCounterFactory;
+import jp.sf.amateras.stepcounter.Util;
+import jp.sf.amateras.stepcounter.format.FormatterFactory;
+import jp.sf.amateras.stepcounter.format.ResultFormatter;
 
 /**
  * ステップカウンタを実行するAntタスクです。
@@ -131,6 +132,8 @@ public class StepCounterTask extends Task {
 	public void execute() throws BuildException {
     	ResultFormatter formatter = FormatterFactory.getFormatter(format);
 
+    	printSystemProperties();
+
     	if (encoding != null) Util.setFileEncoding(encoding);
 
     	OutputStream out = null;
@@ -144,7 +147,7 @@ public class StepCounterTask extends Task {
 	    	} else {
 	    		out = System.out;
 	    	}
-
+	    	Pattern[] filenamePatterns = Util.createFilenamePatterns();
 	    	Map<FileSet, ResourceCollection> fsList = new LinkedHashMap<FileSet, ResourceCollection>();
 	    	for (ResourceCollection rc : rcs) {
 	    		if (rc instanceof FileList && rc.isFilesystemOnly()) {
@@ -190,8 +193,11 @@ public class StepCounterTask extends Task {
 					throw new BuildException("I/O Error: " + baseDir, e);
 				}
 
-        		for (String name : ds.getIncludedFiles()) {
+        		for (String name : Util.exceptGeneratedFile(basePath, ds.getIncludedFiles())) {
         			File file = new File(baseDir, name);
+        			if (Util.matchToAny(filenamePatterns, null, file)) {
+        				continue;
+        			}
         			try {
         				CountResult result = count(file);
         				if (showDirectory) {
@@ -236,7 +242,19 @@ public class StepCounterTask extends Task {
     	}
     }
 
-    private CountResult count(File file) throws IOException {
+    private void printSystemProperties() {
+    	System.out.println("## Print Environmental System Properties ##");
+    	System.out.println(Util.IGNORE_FILENAME_PATTERNS + "=" + Util.ignoreFilenamePatterns());
+    	System.out.println(Util.IGNORE_GENERATED_FILE + "=" + Util.ignoreGeneratedFile());
+    	System.out.println(Util.FILENAME_PATTERNS + "=" + Util.getFilenamePatternsString());
+    	System.out.println(Util.EXTENSION_PAIRS + "=" + Util.getExtensionPairsString());
+
+    	for(Pattern p : Util.createFilenamePatterns()) {
+    		System.out.println(p.pattern());
+    	}
+	}
+
+	private CountResult count(File file) throws IOException {
 		StepCounter counter = StepCounterFactory.getCounter(file.getName());
 		if (counter != null) {
 			return counter.count(file, Util.getFileEncoding(file));

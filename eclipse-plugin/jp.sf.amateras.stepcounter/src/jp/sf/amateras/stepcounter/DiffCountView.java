@@ -6,13 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jp.sf.amateras.stepcounter.diffcount.DiffCounter;
-import jp.sf.amateras.stepcounter.diffcount.DiffCounterUtil;
-import jp.sf.amateras.stepcounter.diffcount.object.DiffFileResult;
-import jp.sf.amateras.stepcounter.diffcount.object.DiffFolderResult;
-import jp.sf.amateras.stepcounter.diffcount.object.DiffStatus;
-import jp.sf.amateras.stepcounter.diffcount.renderer.ExcelRenderer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -20,6 +13,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.Path;
 import org.eclipse.core.runtime.QualifiedName;
+import org.eclipse.jface.util.IPropertyChangeListener;
+import org.eclipse.jface.util.PropertyChangeEvent;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.IStructuredSelection;
 import org.eclipse.swt.SWT;
@@ -45,12 +40,19 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 
+import jp.sf.amateras.stepcounter.diffcount.DiffCounter;
+import jp.sf.amateras.stepcounter.diffcount.DiffCounterUtil;
+import jp.sf.amateras.stepcounter.diffcount.object.DiffFileResult;
+import jp.sf.amateras.stepcounter.diffcount.object.DiffFolderResult;
+import jp.sf.amateras.stepcounter.diffcount.object.DiffStatus;
+import jp.sf.amateras.stepcounter.diffcount.renderer.ExcelRenderer;
+
 /**
  * 差分カウント結果を表示するためのViewPart。
  *
  * @author takanori
  */
-public class DiffCountView extends ViewPart {
+public class DiffCountView extends ViewPart implements IPropertyChangeListener {
 
 	private static final String	FILE		= StepCounterPlugin.getResourceString("DiffCountView.columnName");		//$NON-NLS-1$
 	private static final String	TYPE		= StepCounterPlugin.getResourceString("DiffCountView.columnType");		//$NON-NLS-1$
@@ -80,7 +82,10 @@ public class DiffCountView extends ViewPart {
 	/**
 	 * デフォルトコンストラクタ。
 	 */
-	public DiffCountView() {}
+	public DiffCountView() {
+		super();
+		StepCounterPlugin.getDefault().getPreferenceStore().addPropertyChangeListener(this);
+	}
 
 	/**
 	 * {@inheritDoc}
@@ -94,6 +99,12 @@ public class DiffCountView extends ViewPart {
 		this.clipboard = new Clipboard(parent.getDisplay());
 
 		createFileTable(this.tabFolder);
+	}
+
+	@Override
+	public void dispose() {
+		super.dispose();
+		StepCounterPlugin.getDefault().getPreferenceStore().removePropertyChangeListener(this);
 	}
 
 	/**
@@ -646,6 +657,12 @@ public class DiffCountView extends ViewPart {
 			DiffCountView.this.results = null;
 			DiffCountView.this.categoryTable.removeAll();
 		}
+	}
+
+	@Override
+	public void propertyChange(PropertyChangeEvent event) {
+		// TODO implement this method
+
 	}
 
 }

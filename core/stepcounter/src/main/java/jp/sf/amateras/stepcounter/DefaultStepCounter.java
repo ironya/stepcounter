@@ -190,8 +190,8 @@ public class DefaultStepCounter implements StepCounter, Cutter {
 
 			int startIndex = line.indexOf(start);
 			int endIndex = line.indexOf(end, startIndex + start.length());
-			if(startIndex == 0) { 
-				if(endIndex == line.length()-end.length()) {
+			if(startIndex==0) { 
+				if(endIndex==line.length()-end.length()) {
 					return true;
 				}
 				String commentRemovedLine = line.substring(0, endIndex + end.length());
