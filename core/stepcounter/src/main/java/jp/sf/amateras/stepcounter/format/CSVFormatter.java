@@ -12,7 +12,7 @@ public class CSVFormatter implements ResultFormatter {
 //	private String fileHeader    = "ファイル";
 //	private String stepHeader    = "実行";
 //	private String nonHeader     = "空行";
-//	private String commentHeader = "ｺﾒﾝﾄ";
+//	private String commentHeader = "コメント";
 //	private String typeHeader    = "種類";
 //	private String sumHeader     = "合計";
 

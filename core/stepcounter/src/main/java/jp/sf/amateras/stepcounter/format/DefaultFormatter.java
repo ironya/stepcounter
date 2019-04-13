@@ -20,7 +20,7 @@ public class DefaultFormatter implements ResultFormatter {
 		// ヘッダをフォーマット
 		StringBuffer sb = new StringBuffer();
 		sb.append(fillOrCut("ファイル", maxFileLength));
-		sb.append("種類  カテゴリ            実行  空行  ｺﾒﾝﾄ  合計  ");
+		sb.append("種類  カテゴリ            実行  空行  コメント  合計  ");
 		sb.append("\n");
 		sb.append(makeHyphen(maxFileLength));
 		sb.append("--------------------------------------------------");
@@ -72,7 +72,12 @@ public class DefaultFormatter implements ResultFormatter {
 		return sb.toString().getBytes();
 	}
 
-	/** ファイル名の長さに合わせた最大長を取得します（最小40） */
+	/**
+	 * ファイル名の長さに合わせた最大長を取得します（最小40） 
+	 *
+	 * @param results カウント結果の配列。
+	 * @return 計算結果であるファイル長さ。
+	 */
 	protected int getFileLength(CountResult[] results) {
 		int fileLength = 40;
 		if (results == null || results.length == 0) {

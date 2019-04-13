@@ -102,7 +102,7 @@ public class StepCounterFactory {
 			// C#用カウンタを作成
 			return createJavaCounter("C#");
 
-		} else if(fileName.endsWith(".jsp")){
+		} else if(fileName.endsWith(".jsp") || fileName.endsWith(".jspf") || fileName.endsWith(".tag")){
 			// JSP用カウンタを作成
 			DefaultStepCounter counter = new DefaultStepCounter();
 			counter.addLineComment("//");
@@ -188,7 +188,7 @@ public class StepCounterFactory {
 			// Shell用カウンタを作成
 			return createShellCounter("Shell");
 
-		} else if(fileName.endsWith(".sql")){
+		} else if(fileName.endsWith(".sql") || fileName.endsWith(".ddl")){
 			// SQL用カウンタを作成
 			DefaultStepCounter counter = new DefaultStepCounter();
 			counter.addLineComment("#");
@@ -246,6 +246,22 @@ public class StepCounterFactory {
 			DefaultStepCounter counter = new DefaultStepCounter();
 			counter.addAreaComment(new AreaComment("/*","*/"));
 			counter.setFileType("CSS");
+			return counter;
+
+		} else if(fileName.endsWith(".sass")){
+			// Sass用カウンタを作成
+			DefaultStepCounter counter = new DefaultStepCounter();
+			counter.addLineComment("//");
+			counter.addAreaComment(new AreaComment("/*","*/"));
+			counter.setFileType("Sass");
+			return counter;
+
+		} else if(fileName.endsWith(".scss")){
+			// SCSS用カウンタを作成
+			DefaultStepCounter counter = new DefaultStepCounter();
+			counter.addLineComment("//");
+			counter.addAreaComment(new AreaComment("/*","*/"));
+			counter.setFileType("SCSS");
 			return counter;
 
 		} else if(fileName.endsWith(".l") || fileName.endsWith(".el") || fileName.endsWith(".cl")){
@@ -312,7 +328,7 @@ public class StepCounterFactory {
 			counter.setFileType("Fortran");
 			return counter;
 
-		} else if(fileName.equals("Makefile")){
+		} else if(fileName.equals("makefile") || fileName.endsWith(".mk")){
 			// Makefile用カウンタを作成
 			return createShellCounter("Makefile");
 

@@ -55,7 +55,7 @@ public class StepCounterTask extends Task {
 	/**
 	 * 出力するファイルを指定します。
 	 *
-	 * @param file 出力するファイル
+	 * @param output 出力するファイル
 	 */
 	public void setOutput(File output) {
 		this.output = output;
@@ -109,7 +109,7 @@ public class StepCounterTask extends Task {
 	/**
 	 * デフォルトの除外設定を有効にするか指定します。デフォルトは true です。
 	 *
-	 * @param showDirectory デフォルトの除外設定を有効にする場合 true
+	 * @param defaultExcludes デフォルトの除外設定を有効にする場合 true
 	 */
     public void setDefaultexcludes(boolean defaultExcludes) {
     	this.defaultExcludes = defaultExcludes;
@@ -131,7 +131,7 @@ public class StepCounterTask extends Task {
 	 */
 	public void execute() throws BuildException {
     	ResultFormatter formatter = FormatterFactory.getFormatter(format);
-    	
+
     	printSystemProperties();
 
     	if (encoding != null) Util.setFileEncoding(encoding);
@@ -192,7 +192,7 @@ public class StepCounterTask extends Task {
 				} catch (IOException e) {
 					throw new BuildException("I/O Error: " + baseDir, e);
 				}
- 
+
         		for (String name : Util.exceptGeneratedFile(basePath, ds.getIncludedFiles())) {
         			File file = new File(baseDir, name);
         			if (Util.matchToAny(filenamePatterns, null, file)) {
@@ -248,7 +248,7 @@ public class StepCounterTask extends Task {
     	System.out.println(Util.IGNORE_GENERATED_FILE + "=" + Util.ignoreGeneratedFile());
     	System.out.println(Util.FILENAME_PATTERNS + "=" + Util.getFilenamePatternsString());
     	System.out.println(Util.EXTENSION_PAIRS + "=" + Util.getExtensionPairsString());
-    	
+
     	for(Pattern p : Util.createFilenamePatterns()) {
     		System.out.println(p.pattern());
     	}

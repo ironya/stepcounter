@@ -6,13 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import jp.sf.amateras.stepcounter.diffcount.DiffCounter;
-import jp.sf.amateras.stepcounter.diffcount.DiffCounterUtil;
-import jp.sf.amateras.stepcounter.diffcount.object.DiffFileResult;
-import jp.sf.amateras.stepcounter.diffcount.object.DiffFolderResult;
-import jp.sf.amateras.stepcounter.diffcount.object.DiffStatus;
-import jp.sf.amateras.stepcounter.diffcount.renderer.ExcelRenderer;
-
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
 import org.eclipse.core.resources.IWorkspaceRoot;
@@ -46,6 +39,13 @@ import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+
+import jp.sf.amateras.stepcounter.diffcount.DiffCounter;
+import jp.sf.amateras.stepcounter.diffcount.DiffCounterUtil;
+import jp.sf.amateras.stepcounter.diffcount.object.DiffFileResult;
+import jp.sf.amateras.stepcounter.diffcount.object.DiffFolderResult;
+import jp.sf.amateras.stepcounter.diffcount.object.DiffStatus;
+import jp.sf.amateras.stepcounter.diffcount.renderer.ExcelRenderer;
 
 /**
  * 差分カウント結果を表示するためのViewPart。
@@ -662,7 +662,7 @@ public class DiffCountView extends ViewPart implements IPropertyChangeListener {
 	@Override
 	public void propertyChange(PropertyChangeEvent event) {
 		// TODO implement this method
-		
+
 	}
 
 }
