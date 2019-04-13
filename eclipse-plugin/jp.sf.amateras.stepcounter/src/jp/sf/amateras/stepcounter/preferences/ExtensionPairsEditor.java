@@ -20,14 +20,14 @@ import jp.sf.amateras.stepcounter.StepCounterPlugin;
 import jp.sf.amateras.stepcounter.Util;
 
 public class ExtensionPairsEditor extends TableFieldEditor {
-	
+
 	private static String[] columnNames = new String[] { StepCounterPlugin.getResourceString("ExtensionPairsEditor.columnNameFrom"), StepCounterPlugin.getResourceString("ExtensionPairsEditor.columnNameTo"), StepCounterPlugin.getResourceString("ExtensionPairsEditor.columnNameComment") }; //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 	private static int[] columnWidths = new int[] { 100, 100, 150 };
-	
+
 	public ExtensionPairsEditor(String name, String labelText, Composite parent) {
 		super(name, labelText, columnNames, columnWidths, parent);
 	}
-	
+
 	@Override
 	protected String createList(String[][] items) {
 		StringBuilder listString = new StringBuilder();
@@ -53,7 +53,7 @@ public class ExtensionPairsEditor extends TableFieldEditor {
 		String[] rows = string.split(Util.PAIR_SEPARATOR_REGEX); //$NON-NLS-1$
 		String[][] items = new String[rows.length][];
 		for(int i=0; i<rows.length; i++) {
-			items[i] = rows[i].split(",", columnNames.length); //$NON-NLS-1$
+			items[i] = rows[i].split(Util.EXTENSION_SEPARATOR, columnNames.length); //$NON-NLS-1$
 		}
 		return items;
 	}
@@ -91,11 +91,11 @@ public class ExtensionPairsEditor extends TableFieldEditor {
 		private String fromExtension;
 		private String toExtension;
 		private String comment;
-		
+
 		protected PairDialog(Shell parentShell) {
 			this("", "", "", parentShell); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 		}
-		
+
 		protected PairDialog(String fromExtension, String toExtension, String comment, Shell parentShell) {
 			super(parentShell);
 			this.fromExtension = fromExtension;
@@ -128,7 +128,7 @@ public class ExtensionPairsEditor extends TableFieldEditor {
 					}
 				}
 			});
-			
+
 			Label toTextLabel = new Label(group, SWT.NONE);
 			toTextLabel.setText(StepCounterPlugin.getResourceString("ExtensionPairsEditor.labelToText")); //$NON-NLS-1$
 			Text toText = new Text(group, SWT.SINGLE | SWT.BORDER);
@@ -167,7 +167,7 @@ public class ExtensionPairsEditor extends TableFieldEditor {
 			super.configureShell(newShell);
 			newShell.setText(StepCounterPlugin.getResourceString("ExtensionPairsEditor.widgetName")); //$NON-NLS-1$
 		}
-		
+
 		public String getFromExtension() {
 			return fromExtension;
 		}
@@ -175,7 +175,7 @@ public class ExtensionPairsEditor extends TableFieldEditor {
 		public String getToExtension() {
 			return toExtension;
 		}
-		
+
 		public String getComment() {
 			return comment;
 		}
