@@ -28,9 +28,10 @@ public class Util {
 	public static final String EXTENSION_SEPARATOR = ",";
 	public static final String PAIR_SEPARATOR = "|";
 	public static final String PAIR_SEPARATOR_REGEX = "\\|";
+	public static final String FILENAME_ITEM_SEPARATOR = ",,,";
 	public static final String FILENAME_PATTERN_SEPARATOR = "|||";
 	public static final String FILENAME_PATTERN_SEPARATOR_REGEX = "\\|\\|\\|";
-	
+
 	/**
 	 * 文字列を指定文字列で分割し、配列で返却します。
 	 *
@@ -152,15 +153,15 @@ public class Util {
 
 		return System.getProperty("file.encoding");
 	}
-	
+
 	public static String[] exceptGeneratedFile(String[] filePaths) {
 		return exceptGeneratedFile(null, filePaths);
 	}
-	
+
 	public static File[] exceptGeneratedFile(File[] files) {
 		return exceptGeneratedFile(null, files);
 	}
-	
+
 	public static String[] exceptGeneratedFile(String basePath, String[] filePaths) {
 		if (!Boolean.getBoolean(IGNORE_GENERATED_FILE)) {
 			return filePaths;
@@ -180,7 +181,7 @@ public class Util {
 		}
 		return exceptedPaths;
 	}
-	
+
 	public static Map<String, String> createExtensionPairs() {
 		Map<String, String> pairs = new LinkedHashMap<String, String>();
 		String source = System.getProperty(EXTENSION_PAIRS);
@@ -200,19 +201,19 @@ public class Util {
 	public static boolean ignoreFilenamePatterns() {
 		return Boolean.getBoolean(IGNORE_FILENAME_PATTERNS);
 	}
-	
+
 	public static boolean ignoreGeneratedFile() {
 		return Boolean.getBoolean(IGNORE_GENERATED_FILE);
 	}
-	
+
 	public static String getExtensionPairsString() {
 		return System.getProperty(EXTENSION_PAIRS);
 	}
-	
+
 	public static String getFilenamePatternsString() {
 		return System.getProperty(FILENAME_PATTERNS);
 	}
-	
+
 	public static File[] exceptGeneratedFile(File basePathFile, File[] files) {
 		if (!ignoreGeneratedFile()) {
 			return files;
@@ -264,7 +265,7 @@ public class Util {
 		int lastPeriodIndex = path.lastIndexOf('.');
 		return lastPeriodIndex > 0 ? path.substring(lastPeriodIndex) : "";
 	}
-	
+
 	public static boolean matchToAny(Pattern[] patterns, File parent, File file) {
 		if (!Util.ignoreFilenamePatterns()) {
 			return false;
@@ -281,7 +282,7 @@ public class Util {
 		}
 		return matchToAny(patterns, path);
 	}
-	
+
 	public static boolean matchToAny(Pattern[] patterns, String value) {
 		for(Pattern pattern : patterns) {
 			if (pattern.matcher(value).matches()) {
@@ -290,18 +291,21 @@ public class Util {
 		}
 		return false;
 	}
-	
+
 	public static Pattern[] createFilenamePatterns() {
 		String filenamePatternsString = System.getProperty(FILENAME_PATTERNS);
 		if (filenamePatternsString == null) {
 			return new Pattern[0];
 		}
 		String[] filenamePatterns = filenamePatternsString.split(FILENAME_PATTERN_SEPARATOR_REGEX);
+		for (int i=0; i<filenamePatterns.length; i++) {
+			filenamePatterns[i] = filenamePatterns[i].split(FILENAME_ITEM_SEPARATOR)[0];
+		}
 		return createPatterns(filenamePatterns);
 	}
-	
+
 	public static Pattern[] createPatterns(String[] patternStrings) {
-		if (patternStrings == null) 
+		if (patternStrings == null)
 			return new Pattern[0];
 		if (patternStrings.length == 1 && patternStrings[0].trim().length() == 0) {
 			return new Pattern[0];

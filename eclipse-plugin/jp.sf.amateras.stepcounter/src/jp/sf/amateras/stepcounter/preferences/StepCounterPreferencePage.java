@@ -9,10 +9,10 @@ import jp.sf.amateras.stepcounter.StepCounterPlugin;
 
 /**
  * This class represents a preference page that
- * is contributed to the Preferences dialog. By 
+ * is contributed to the Preferences dialog. By
  * subclassing <samp>FieldEditorPreferencePage</samp>, we
  * can use the field support built into JFace that allows
- * us to create a page that is small and knows how to 
+ * us to create a page that is small and knows how to
  * save, restore and apply itself.
  * <p>
  * This page is used to modify preferences only. They
@@ -30,7 +30,7 @@ public class StepCounterPreferencePage
 		setPreferenceStore(StepCounterPlugin.getDefault().getPreferenceStore());
 		setDescription(StepCounterPlugin.getResourceString("StepCounterPreference.description")); //$NON-NLS-1$
 	}
-	
+
 	/**
 	 * Creates the field editors. Field editors are abstractions of
 	 * the common GUI blocks needed to manipulate various types
@@ -45,10 +45,10 @@ public class StepCounterPreferencePage
 				StepCounterPlugin.getResourceString("StepCounterPreference.labelExtensionPairs"), //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_IGNORE_FILENAME_PATTERNS,
-				StepCounterPlugin.getResourceString("StepCounterPreference.labelEnableIgnoreFilenamePatterns"), //$NON-NLS-1$
+				StepCounterPlugin.getResourceString("StepCounterPreference.labelEnableIgnoreFileNamePatterns"), //$NON-NLS-1$
 				getFieldEditorParent()));
 		addField(new FileNamePatternEditor(PreferenceConstants.P_FILENAME_PATTERNS,
-				StepCounterPlugin.getResourceString("StepCounterPreference.filenamePatterns"), //$NON-NLS-1$
+				StepCounterPlugin.getResourceString("StepCounterPreference.fileNamePatterns"), //$NON-NLS-1$
 				getFieldEditorParent()));
 	}
 
@@ -57,5 +57,5 @@ public class StepCounterPreferencePage
 	 */
 	public void init(IWorkbench workbench) {
 	}
-	
+
 }
