@@ -32,6 +32,8 @@ public class StepCountAction implements IObjectActionDelegate {
 	public void run(IAction action) {
 		try {
 			// POJO の core 系クラスからの参照用
+			System.setProperty(PreferenceConstants.P_SHOW_DIRECTORY, Boolean.toString(StepCounterPlugin
+					.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_SHOW_DIRECTORY)));
 			System.setProperty(PreferenceConstants.P_IGNORE_GENERATED_FILE, Boolean.toString(StepCounterPlugin
 					.getDefault().getPreferenceStore().getBoolean(PreferenceConstants.P_IGNORE_GENERATED_FILE)));
 			System.setProperty(Util.EXTENSION_PAIRS, StepCounterPlugin

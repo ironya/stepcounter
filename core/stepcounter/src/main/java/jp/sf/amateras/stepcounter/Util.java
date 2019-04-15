@@ -31,6 +31,7 @@ public class Util {
 	public static final String FILENAME_ITEM_SEPARATOR = ",,,";
 	public static final String FILENAME_PATTERN_SEPARATOR = "|||";
 	public static final String FILENAME_PATTERN_SEPARATOR_REGEX = "\\|\\|\\|";
+	public static final String SHOW_DIRECTORY = "showDirectory";
 
 	/**
 	 * 文字列を指定文字列で分割し、配列で返却します。
@@ -212,6 +213,10 @@ public class Util {
 
 	public static String getFilenamePatternsString() {
 		return System.getProperty(FILENAME_PATTERNS);
+	}
+
+	public static boolean showDirectory() {
+		return Boolean.getBoolean(SHOW_DIRECTORY);
 	}
 
 	public static File[] exceptGeneratedFile(File basePathFile, File[] files) {

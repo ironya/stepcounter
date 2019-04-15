@@ -12,11 +12,12 @@ public class PreferenceInitializer extends AbstractPreferenceInitializer {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see org.eclipse.core.runtime.preferences.AbstractPreferenceInitializer#initializeDefaultPreferences()
 	 */
 	public void initializeDefaultPreferences() {
 		IPreferenceStore store = StepCounterPlugin.getDefault().getPreferenceStore();
+		store.setDefault(PreferenceConstants.P_SHOW_DIRECTORY, false);
 		store.setDefault(PreferenceConstants.P_IGNORE_GENERATED_FILE, false);
 		store.setDefault(PreferenceConstants.P_EXTENSION_PAIRS, "");
 		store.setDefault(PreferenceConstants.P_IGNORE_FILENAME_PATTERNS, false);

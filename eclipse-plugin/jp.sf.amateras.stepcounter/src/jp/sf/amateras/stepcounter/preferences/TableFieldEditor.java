@@ -35,7 +35,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 	private final String[] columnNames;
 	private final int[] columnWidths;
 	private int tableWidth;
-	
+
 	public TableFieldEditor() {
 		columnNames = new String[0];
 		columnWidths = new int[0];
@@ -56,7 +56,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 			tableWidth += columnWidth;
 		createControl(parent);
 	}
-	
+
 	protected abstract String createList(String[][] items);
 	protected abstract String[][] parseString(String string);
 	protected abstract String[] getNewInputObject();
@@ -103,7 +103,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 		button.addSelectionListener(getSelectionListener());
 		return button;
 	}
-	
+
 	@Override
 	protected void adjustForNumColumns(int numColumns) {
 		Control control = getLabelControl();
@@ -170,7 +170,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 		}
 		return numberOfItems;
 	}
-	
+
 	protected TableItem[] getItems() {
 		TableItem[] items = null;
 		if(table != null) {
@@ -178,7 +178,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 		}
 		return items;
 	}
-	
+
 	protected void removeTableItems() {
 		if(table != null) {
 			table.removeAll();
@@ -283,7 +283,7 @@ public abstract class TableFieldEditor extends FieldEditor {
 			final TableEditor editor = new TableEditor(table);
 			editor.horizontalAlignment = SWT.LEFT;
 			editor.grabHorizontal = true;
-		
+
 		} else {
 			checkParent(table, parent);
 		}

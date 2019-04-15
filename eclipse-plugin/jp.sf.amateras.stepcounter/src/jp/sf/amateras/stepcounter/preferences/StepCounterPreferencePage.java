@@ -38,6 +38,9 @@ public class StepCounterPreferencePage
 	 * restore itself.
 	 */
 	public void createFieldEditors() {
+		addField(new BooleanFieldEditor(PreferenceConstants.P_SHOW_DIRECTORY,
+				StepCounterPlugin.getResourceString("StepCounterPreference.labelShowDirectory"), //$NON-NLS-1$
+				getFieldEditorParent()));
 		addField(new BooleanFieldEditor(PreferenceConstants.P_IGNORE_GENERATED_FILE,
 				StepCounterPlugin.getResourceString("StepCounterPreference.labelEnableIgnoreGeneratedFile"), //$NON-NLS-1$
 				getFieldEditorParent()));

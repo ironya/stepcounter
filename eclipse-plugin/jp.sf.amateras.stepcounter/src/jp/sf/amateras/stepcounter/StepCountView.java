@@ -10,8 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
-import jp.sf.amateras.stepcounter.format.ExcelFormatter;
-
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
 import org.eclipse.core.resources.IResource;
@@ -40,6 +38,8 @@ import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
+
+import jp.sf.amateras.stepcounter.format.ExcelFormatter;
 
 /**
  * カウント結果を表示するためのViewPart
@@ -75,8 +75,9 @@ public class StepCountView extends ViewPart {
 	private HashMap<String, IFile>	files		= new HashMap<String, IFile>();
 
 	private List<CountResult>		results		= new ArrayList<CountResult>();
-	
+
 	private Pattern[] filenamePatterns;
+	private boolean showDirectory;
 
 	/**
 	 * コンストラクタ
@@ -264,6 +265,7 @@ public class StepCountView extends ViewPart {
 			List<CategoryStepDto> categoryResult = new ArrayList<CategoryStepDto>();
 
 			filenamePatterns = Util.createFilenamePatterns();
+			showDirectory = Util.showDirectory();
 
 			while (ite.hasNext()) {
 				Object obj = ite.next();
@@ -366,6 +368,9 @@ public class StepCountView extends ViewPart {
 					return null;
 				}
 
+				if (showDirectory) {
+					result.setFileName(file.getFullPath().toString());
+				}
 				results.add(result);
 
 				String type = result.getFileType();
@@ -454,9 +459,9 @@ public class StepCountView extends ViewPart {
 			return members;
 		if (!Util.ignoreGeneratedFile())
 			return members;
-		
+
 		Map<String, String> extensionPairs = Util.createExtensionPairs();
-		
+
 		List<IResource> excepted = new ArrayList<IResource>(Arrays.asList(members));
 		List<String> priors = gatherPriorExtensionFiles(extensionPairs, members);
 		for (Iterator<IResource> itr = excepted.iterator(); itr.hasNext();) {
@@ -479,7 +484,7 @@ public class StepCountView extends ViewPart {
 				}
 			}
 		}
-		
+
 		return excepted.toArray(new IResource[excepted.size()]);
 	}
 
@@ -519,7 +524,7 @@ public class StepCountView extends ViewPart {
 		}
 		return result;
 	}
-	
+
 	private IFile[] merge (ICompilationUnit[] javaFiles, Object[] nonJavaFiles) {
 		int javaFilesLength = javaFiles == null ? 0 : javaFiles.length;
 		int nonJavaFilesLength = nonJavaFiles == null ? 0 : nonJavaFiles.length;
@@ -532,14 +537,15 @@ public class StepCountView extends ViewPart {
 		}
 		return merged.toArray(new IFile[merged.size()]);
 	}
-	
+
 	private void count(IFile file, CountResult result, List<CategoryStepDto> categoryResult) {
 		CountResult count = countFile(file, categoryResult);
 		if (count != null) {
 			result.setStep(result.getStep() + count.getStep());
 			result.setNon(result.getNon() + count.getNon());
 			result.setComment(result.getComment() + count.getComment());
-		}	}
+		}
+	}
 
 	/**
 	 * @see ViewPart#setFocus
